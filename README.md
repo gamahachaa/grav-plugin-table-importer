@@ -141,3 +141,55 @@ default:
 Because PHP's builtin CSV support is...let's just say inelegant, this plugin incorporates the most excellent [PHPLeague CSV library](http://csv.thephpleague.com/).
 
 Forked from the original project and maintainer due to abandonment [Perlkonig/grav-plugin-table-importer](https://github.com/Perlkonig/grav-plugin-table-importer)
+
+## Grav 2.0 compat checklist
+## 1. Installation & Plugin Enablement
+
+**Status:** Compatible
+
+- The plugin loads, registers its event subscribers (`onShortcodeHandlers`), and enables properly in Grav 2.0 without startup issues or container exceptions.
+- Event registration cleanly hooks into `shortcode-core`.
+
+## 2. Core Functionality & Shortcode Processing
+
+**Status:** Compatible
+
+All core features and table generation capabilities work as expected:
+
+- **CSV Imports:** Processed via `League\Csv\Reader` and rendered to HTML tables.
+- **JSON Imports:** Correctly decoded with `json_decode()` and rendered.
+- **YAML Imports:** Correctly parsed with `Yaml::parse()` and rendered.
+- **Shortcode Parameters:** Options including `file`, `header`, `footer`, `class`, `id`, `caption`, `raw` (CDATA/HTML escaping), `delimiter`, `enclosure`, and `escape` function properly and generate valid HTML markup.
+
+## 3. PHP Version & Deprecation Warnings
+
+**Status:** Compatible
+
+- Tested with `error_reporting = E_ALL` on PHP 8.3.31 (Grav 2.0 requirement: `^8.3`).
+- No PHP fatal errors, warnings, notices, or deprecation messages were encountered across all execution paths.
+
+## 4. Vendor & Composer Dependencies Compatibility
+
+**Status:** Compatible
+
+### `league/csv`
+
+- Repository: <https://github.com/thephpleague/csv>
+- Bundled version: `v9.8.0` (in `vendor/csv`).
+- Requirements:
+    - `php: ^7.4 || ^8.0`
+    - `ext-json`
+    - `ext-mbstring`
+- Verified to operate seamlessly on PHP 8.3/8.4 without deprecated function calls or type mismatches.
+
+### Logging (`psr/log` / `monolog`)
+
+- The plugin does not directly depend on `psr/log` or `monolog`.
+- Error reporting uses `Grav::instance()['debugger']->addMessage()`, which is fully supported and compatible with Grav 2.0's debugging subsystem.
+
+## 5. Admin Panel Integration & Blueprints
+
+**Status:** Compatible
+
+- `blueprints.yaml` loads correctly into Grav's blueprint engine.
+- Field schemas (toggles, selects, text inputs, sections, and regex validation patterns for `delimiter`, `enclosure`, and `escape`) validate cleanly against Grav 2.0's `Grav\Common\Data\Data` and form validation engine.
